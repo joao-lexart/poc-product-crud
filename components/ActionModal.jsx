@@ -11,8 +11,12 @@ export function ActionModal({ handleClose, item }) {
   const [updatedPrice, setUpdatedPrice] = useState("");
   const [updatedCurrency, setUpdatedCurrency] = useState("");
   const [updatedCategory, setUpdatedCategory] = useState("");
+  const [error, setError] = useState(false);
 
   function updateItem() {
+    if (updatedName === "" || updatedCategory === "" || updatedPrice === "" || updatedCurrency === "") {
+      return setError(true);
+    }
     const ref = doc(db, `products/${item.id}`);
     console.log("editou!");
     updateDoc(ref, {
@@ -27,6 +31,9 @@ export function ActionModal({ handleClose, item }) {
       .catch((err) => {
         console.log(err);
       });
+      
+      handleClose()
+    
   }
 
   return (
@@ -78,6 +85,7 @@ export function ActionModal({ handleClose, item }) {
         />
 
         <button onClick={updateItem}>Edit</button>
+        {error && <p>Invalid data, please insert all fields</p>}
       </View>
     </SafeAreaView>
   );
