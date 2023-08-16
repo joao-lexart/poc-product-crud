@@ -2,7 +2,7 @@ import RNPickerSelect from "react-native-picker-select";
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, FlatList, Pressable } from 'react-native';
-import { collection, addDoc, query, getDocs } from "firebase/firestore"; 
+import { collection, addDoc, query, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore"; 
 import { db } from './components/config';
 
 export default function App() {
@@ -22,7 +22,6 @@ export default function App() {
     const products = [];
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
       const { name, category, price, currency} = doc.data();
       products.push({
         id: doc.id,
@@ -35,7 +34,7 @@ export default function App() {
     setProductList(products)
   }, [productList]) 
 
-  function create () {
+  function createItem () {
     if (name === "" || category === "" || price === "" || currency === "") {
       return (
         setError(true)
@@ -55,6 +54,28 @@ export default function App() {
     getProducts();
   }
 
+  function deleteItem(id) {
+    deleteDoc(doc(db, "products", id));
+    console.log("deletou!");
+    getProducts();
+  }
+
+  function updateItem(id) {
+    console.log(id)
+    console.log("entrou no update")
+    updateDoc(doc(db, "products", id), {
+      name: "produto atualizado",
+      category: "categoria atualizada",
+      price: "price att",
+      currency: "currency att",
+    }).then(() => {
+      console.log("Data updated");
+    }).catch((err) => {
+      console.log(err);
+    });
+    getProducts();
+  }
+
 useEffect(() => {
   getProducts()
  }, [])
@@ -63,9 +84,7 @@ useEffect(() => {
     <View style={styles.container}>
       <Text>Create New Product</Text>
       <TextInput value={name} placeholder="Name" onChange={(e) => {setName(e.target.value)}} style={styles.textBox}></TextInput>
-      <TextInput value={price} placeholder="Price" onChange={(e) => {setPrice(e.target.value)}} style={styles.textBox}></TextInput>
-      <TextInput value={currency} placeholder="Currency" onChange={(e) => {setCurrency(e.target.value)}} style={styles.textBox}></TextInput>
-
+    
       <RNPickerSelect 
         placeholder={{ label: "Select a category", value: "Select a category" }}
         onValueChange={(value) => setCategory(value)}
@@ -78,8 +97,21 @@ useEffect(() => {
         ]}
         style={pickerSelectStyles}
       />
+      <TextInput value={price} placeholder="Price" onChange={(e) => {setPrice(e.target.value)}} style={styles.textBox}></TextInput>
 
-      <button onClick={create}>Create</button>
+      <RNPickerSelect 
+        placeholder={{ label: "Select currency", value: "Select currency" }}
+        onValueChange={(value) => setCurrency(value)}
+        items = {[
+          {label: "USD", value: "USD"},
+          {label: "BRL", value: "BRL" },
+          {label: "EUR", value: "EUR"},
+          {label: "LIB", value: "LIB"},
+        ]}
+        style={pickerSelectStyles}
+      />
+
+      <button onClick={createItem}>Create</button>
 
         { error && <p>Invalid data, please insert all fields</p>}
 
@@ -94,6 +126,10 @@ useEffect(() => {
               <Text style={styles.itemText}>  Category: {item.category} </Text>
               <Text style={styles.itemText}> Price: {item.price} </Text>
               <Text style={styles.itemText}> Currency: {item.currency} </Text>
+              <button onClick={() => deleteItem(item.id)}>Delete</button>
+              <button onClick={() => updateItem(item.id)}>Update</button>
+
+
             </View>
           </Pressable>
         )}
