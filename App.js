@@ -1,3 +1,4 @@
+import RNPickerSelect from "react-native-picker-select";
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, Text, View, TextInput, FlatList, Pressable } from 'react-native';
@@ -7,10 +8,11 @@ import { db } from './components/config';
 export default function App() {
 
   const [name, setName] = useState('');
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState("");
   const [price, setPrice] = useState('');
   const [currency, setCurrency] = useState('');
   const [productList, setProductList] = useState([]);
+  const [error, setError] = useState(false);
 
 
   const getProducts = useCallback( async () => {
@@ -34,6 +36,11 @@ export default function App() {
   }, [productList]) 
 
   function create () {
+    if (name === "" || category === "" || price === "" || currency === "") {
+      return (
+        setError(true)
+      )
+    }
     addDoc(collection(db, "products"), {
       name: name,
       category: category,
@@ -44,9 +51,9 @@ export default function App() {
     }).catch((err) => {
       console.log(err);
     });
+    setError(false);
     getProducts();
   }
-
 
 useEffect(() => {
   getProducts()
@@ -56,12 +63,25 @@ useEffect(() => {
     <View style={styles.container}>
       <Text>Create New Product</Text>
       <TextInput value={name} placeholder="Name" onChange={(e) => {setName(e.target.value)}} style={styles.textBox}></TextInput>
-      <TextInput value={category} placeholder="Category" onChange={(e) => {setCategory(e.target.value)}} style={styles.textBox}></TextInput>
       <TextInput value={price} placeholder="Price" onChange={(e) => {setPrice(e.target.value)}} style={styles.textBox}></TextInput>
       <TextInput value={currency} placeholder="Currency" onChange={(e) => {setCurrency(e.target.value)}} style={styles.textBox}></TextInput>
 
+      <RNPickerSelect 
+        placeholder={{ label: "Select a category", value: "Select a category" }}
+        onValueChange={(value) => setCategory(value)}
+        items = {[
+          {label: "Technology", value: "Technology"},
+          {label: "Home appliances", value: "Home appliances" },
+          {label: "Fashion", value: "Fashion"},
+          {label: "Cars", value: "Cars"},
+          {label: "Toys", value: "Toys" },
+        ]}
+        style={pickerSelectStyles}
+      />
+
       <button onClick={create}>Create</button>
-      <StatusBar style="auto" />
+
+        { error && <p>Invalid data, please insert all fields</p>}
 
       <FlatList 
         style={{height: '100%'}}
@@ -78,6 +98,7 @@ useEffect(() => {
           </Pressable>
         )}
       />
+      <StatusBar style="auto" />
     </View>
   );
 }
@@ -110,5 +131,28 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontWeight: '300',
+  }
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+      fontSize: 16,
+      paddingVertical: 12,
+      paddingHorizontal: 10,
+      borderWidth: 1,
+      borderColor: 'gray',
+      borderRadius: 4,
+      color: 'black',
+      paddingRight: 30 // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+      fontSize: 16,
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+      borderWidth: 0.5,
+      borderColor: 'purple',
+      borderRadius: 8,
+      color: 'black',
+      paddingRight: 30 // to ensure the text is never behind the icon
   }
 });
