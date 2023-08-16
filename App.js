@@ -7,7 +7,7 @@ import {
   View,
   TextInput,
   FlatList,
-  Pressable,
+  Modal,
 } from "react-native";
 import {
   collection,
@@ -18,6 +18,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "./components/config";
+import { ActionModal } from "./components/ActionModal";
 
 export default function App() {
   const [name, setName] = useState("");
@@ -26,6 +27,7 @@ export default function App() {
   const [currency, setCurrency] = useState("");
   const [productList, setProductList] = useState([]);
   const [error, setError] = useState(false);
+  const [visibleModal, setVisibleModal] = useState(false);
 
   function createItem() {
     if (name === "" || category === "" || price === "" || currency === "") {
@@ -63,19 +65,7 @@ export default function App() {
 
 
     function updateItem() {
-      console.log("entrou no update");
-      updateDoc(ref, {
-        name: "produto atualizado",
-        category: "categoria atualizada",
-        price: "price att",
-        currency: "currency att",
-      })
-        .then(() => {
-          console.log("Data updated");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      setVisibleModal(true)
     }
     return (
       <View style={styles.innerContainer}>
@@ -85,6 +75,18 @@ export default function App() {
         <Text style={styles.itemText}> Currency: {item.currency} </Text>
         <button onClick={deleteItem}>Delete</button>
         <button onClick={updateItem}>Update</button>
+
+        <Modal
+          visible={visibleModal}
+          transparent={true}
+          onRequestClose={ () => setVisibleModal(false)}
+        >
+          <ActionModal 
+            handleClose = {() => setVisibleModal(false)}
+            item = {item}
+            
+          />
+        </Modal>
       </View>
     );
   }
@@ -118,7 +120,7 @@ export default function App() {
           setName(e.target.value);
         }}
         style={styles.textBox}
-      ></TextInput>
+      />
 
       <RNPickerSelect
         placeholder={{ label: "Select a category", value: "Select a category" }}
@@ -139,7 +141,7 @@ export default function App() {
           setPrice(e.target.value);
         }}
         style={styles.textBox}
-      ></TextInput>
+      />
 
       <RNPickerSelect
         placeholder={{ label: "Select currency", value: "Select currency" }}
