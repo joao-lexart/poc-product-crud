@@ -6,18 +6,22 @@ import fetchCurrency from '../utils/fetchCurrency';
 
 export default function Cart() {
   const {cart, setCart, cartValue, setCartValue} =  useContext(Context);
-  console.log(cart)
+  
   function renderCart ({item}) {
 
     const deleteFromCart = async () => {
-      console.log("deleted")
+    
       cart.pop();
       setCart(cart);
       if (item.currency !== "BRL") {
         const cotation = await fetchCurrency(item.currency);
+        console.log(cotation)
         const formattedCotation = cotation.slice(0, -2)
+        console.log(formattedCotation);
         const converted = Number(formattedCotation) * Number(item.price);
-        return setCartValue(() => cartValue - converted);
+        console.log(converted);
+        setCartValue(() => cartValue - converted);
+        return 
       }
       setCartValue(() => cartValue - Number(item.price));
     }
@@ -38,6 +42,7 @@ export default function Cart() {
           data={cart}
           numColumns={1}
           renderItem={(item) => renderCart(item)}
+          keyExtractor={(item) => item.productId }
         />
     </View>
   )

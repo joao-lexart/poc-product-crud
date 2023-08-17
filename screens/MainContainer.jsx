@@ -16,8 +16,7 @@ const Tab = createBottomTabNavigator();
 export default function MainContainer() {
 
   const {cartValue} = useContext(Context);
-  console.log(cartValue)
-
+  
   return (
     <NavigationContainer>
       <Tab.Navigator

@@ -14,6 +14,7 @@ import fetchCurrency from "../utils/fetchCurrency";
 export const Context = createContext();
 
 function Provider({ children }) {
+  const [productId, setProductId] = useState(1);
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState(0);
@@ -24,19 +25,19 @@ function Provider({ children }) {
   const [cart, setCart] = useState([]);
   const [cartValue, setCartValue] = useState(0);
 
-  function calculateTotal () {
-    
-  }
+  
 
   function createItem() {
     if (name === "" || category === "" || price === "" || currency === "") {
       return setError(true);
     }
+    setProductId( productId + 1 )
     addDoc(collection(db, "products"), {
       name: name,
       category: category,
       price: price,
       currency: currency,
+      productId,
     })
       .then(() => {
         console.log("Data submitted");
@@ -62,8 +63,17 @@ function Provider({ children }) {
     }
 
     async function addToCart() {
-      console.log(cart);
-      cart.push(item);
+      console.log(productId)
+      setProductId(productId + 1)
+      const newItem = {
+        name: item.name,
+        category: item.category,
+        currency: item.currency,
+        price: item.price,
+        productId: productId
+      }
+      cart.push(newItem);
+      
       if (item.currency !== "BRL") {
         const cotation = await fetchCurrency(item.currency);
         const formattedCotation = cotation.slice(0, -2)
