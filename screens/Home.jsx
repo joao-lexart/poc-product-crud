@@ -1,23 +1,24 @@
 import { useContext } from "react";
 import RNPickerSelect from "react-native-picker-select";
 import { StatusBar } from "expo-status-bar";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  FlatList,
-
-} from "react-native";
+import { StyleSheet, Text, View, TextInput, FlatList } from "react-native";
 
 import { Context } from "../context/Provider";
 
-
-
 export default function Home() {
+  const {
+    name,
+    setCategory,
+    price,
+    setCurrency,
+    renderProduct,
+    productList,
+    createItem,
+    setName,
+    setPrice,
+    error,
+  } = useContext(Context);
 
-  const {name, setCategory, price, setCurrency, renderProduct, productList, createItem, setName, setPrice, error} = useContext(Context);
-  
   return (
     <View style={styles.container}>
       <Text>Create New Product</Text>
@@ -45,6 +46,7 @@ export default function Home() {
       <TextInput
         value={price}
         placeholder="Price"
+        inputMode="numeric"
         onChange={(e) => {
           setPrice(e.target.value);
         }}
@@ -58,7 +60,7 @@ export default function Home() {
           { label: "USD", value: "USD" },
           { label: "BRL", value: "BRL" },
           { label: "EUR", value: "EUR" },
-          { label: "LIB", value: "LIB" },
+          { label: "ARS", value: "ARS" },
         ]}
         style={pickerSelectStyles}
       />
@@ -99,7 +101,7 @@ const styles = StyleSheet.create({
     borderColor: "gray",
     borderWidth: 0.2,
     borderRadius: 30,
-  }
+  },
 });
 
 const pickerSelectStyles = StyleSheet.create({

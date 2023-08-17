@@ -14,6 +14,7 @@ import {
   } from "firebase/firestore";
   import { db } from '../components/config'
   import { ActionModal } from "../components/ActionModal"
+  import fetchCurrency from '../utils/fetchCurrency';
 
 export const Context = createContext();
 
@@ -21,11 +22,12 @@ function Provider({children}) {
 
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
-  const [price, setPrice] = useState("");
+  const [price, setPrice] = useState(0);
   const [currency, setCurrency] = useState("");
   const [productList, setProductList] = useState([]);
   const [error, setError] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
+  const [cartValue, setCartValue] = useState(0);
 
   function createItem() {
     if (name === "" || category === "" || price === "" || currency === "") {
@@ -60,8 +62,14 @@ function Provider({children}) {
       setVisibleModal(true);
     }
 
-    function addToCart() {
-      console.log("clicked")
+    async function addToCart() {
+      if (item.currency !== "BRL"){
+          const dolarCotation = await fetchCurrency(item.currency);
+          const converted = dolarCotation * Number(item.price);
+          console.log("converteuuu",converted);
+          return setCartValue(() => cartValue + converted)
+      }  
+      setCartValue(() => cartValue + Number(item.price))
     }
     return (
       <View style={styles.innerContainer}>
@@ -114,7 +122,8 @@ function Provider({children}) {
         setName, 
         setPrice, 
         error, 
-        createItem
+        createItem,
+        cartValue
     }
   return (
     <Context.Provider value={value}>
