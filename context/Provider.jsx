@@ -51,11 +51,22 @@ function Provider({children}) {
   function renderProduct({ item }) {
     const ref = doc(db, `products/${item.id}`);
 
-    function deleteItem() {
+    function cartCounter () {
+        
+    }
+
+    async function deleteItem() {
       deleteDoc(ref);
       if (productList.length === 1) {
         setProductList([]);
       }
+      if (item.currency !== "BRL"){
+        const dolarCotation = await fetchCurrency(item.currency);
+        const converted = dolarCotation * Number(item.price);
+        return setCartValue(() => cartValue - converted)
+    }  
+      setCartValue(() => cartValue - Number(item.price))
+
     }
 
     function updateItem() {
@@ -66,7 +77,6 @@ function Provider({children}) {
       if (item.currency !== "BRL"){
           const dolarCotation = await fetchCurrency(item.currency);
           const converted = dolarCotation * Number(item.price);
-          console.log("converteuuu",converted);
           return setCartValue(() => cartValue + converted)
       }  
       setCartValue(() => cartValue + Number(item.price))
