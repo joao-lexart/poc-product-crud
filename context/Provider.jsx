@@ -1,25 +1,19 @@
-import React, {createContext, useState, useEffect} from 'react';
+import React, { createContext, useState, useEffect } from "react";
+import { StyleSheet, Text, View, Modal } from "react-native";
 import {
-    StyleSheet,
-    Text,
-    View,
-    Modal,
-  } from "react-native";
-import {
-    collection,
-    addDoc,
-    doc,
-    deleteDoc,
-    onSnapshot,
-  } from "firebase/firestore";
-  import { db } from '../components/config'
-  import { ActionModal } from "../components/ActionModal"
-  import fetchCurrency from '../utils/fetchCurrency';
+  collection,
+  addDoc,
+  doc,
+  deleteDoc,
+  onSnapshot,
+} from "firebase/firestore";
+import { db } from "../components/config";
+import { ActionModal } from "../components/ActionModal";
+import fetchCurrency from "../utils/fetchCurrency";
 
 export const Context = createContext();
 
-function Provider({children}) {
-
+function Provider({ children }) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
   const [price, setPrice] = useState(0);
@@ -27,7 +21,12 @@ function Provider({children}) {
   const [productList, setProductList] = useState([]);
   const [error, setError] = useState(false);
   const [visibleModal, setVisibleModal] = useState(false);
+  const [cart, setCart] = useState([]);
   const [cartValue, setCartValue] = useState(0);
+
+  function calculateTotal () {
+    
+  }
 
   function createItem() {
     if (name === "" || category === "" || price === "" || currency === "") {
@@ -51,22 +50,11 @@ function Provider({children}) {
   function renderProduct({ item }) {
     const ref = doc(db, `products/${item.id}`);
 
-    function cartCounter () {
-        
-    }
-
     async function deleteItem() {
       deleteDoc(ref);
       if (productList.length === 1) {
         setProductList([]);
       }
-      if (item.currency !== "BRL"){
-        const dolarCotation = await fetchCurrency(item.currency);
-        const converted = dolarCotation * Number(item.price);
-        return setCartValue(() => cartValue - converted)
-    }  
-      setCartValue(() => cartValue - Number(item.price))
-
     }
 
     function updateItem() {
@@ -74,12 +62,17 @@ function Provider({children}) {
     }
 
     async function addToCart() {
-      if (item.currency !== "BRL"){
-          const dolarCotation = await fetchCurrency(item.currency);
-          const converted = dolarCotation * Number(item.price);
-          return setCartValue(() => cartValue + converted)
-      }  
-      setCartValue(() => cartValue + Number(item.price))
+      console.log(cart);
+      cart.push(item);
+      if (item.currency !== "BRL") {
+        const cotation = await fetchCurrency(item.currency);
+        const formattedCotation = cotation.slice(0, -2)
+        const converted = Number(formattedCotation) * Number(item.price);
+        setCart(cart);
+        return setCartValue(() => cartValue + converted);
+      }
+      setCart(cart);
+      setCartValue(() => cartValue + Number(item.price));
     }
     return (
       <View style={styles.innerContainer}>
@@ -90,7 +83,6 @@ function Provider({children}) {
         <button onClick={deleteItem}>Delete</button>
         <button onClick={updateItem}>Update</button>
         <button onClick={addToCart}>Add To Cart</button>
-
 
         <Modal
           visible={visibleModal}
@@ -122,37 +114,36 @@ function Provider({children}) {
     });
   }, []);
 
-    const value = {
-        name, 
-        setCategory, 
-        price, 
-        setCurrency, 
-        renderProduct, 
-        productList, 
-        setName, 
-        setPrice, 
-        error, 
-        createItem,
-        cartValue
-    }
-  return (
-    <Context.Provider value={value}>
-        {children}
-    </Context.Provider>
-  )
+  const value = {
+    name,
+    setCategory,
+    price,
+    setCurrency,
+    renderProduct,
+    productList,
+    setName,
+    setPrice,
+    error,
+    createItem,
+    cartValue,
+    cart,
+    setCart,
+    setCartValue
+  };
+  return <Context.Provider value={value}>{children}</Context.Provider>;
 }
 
 export default Provider;
 
 const styles = StyleSheet.create({
-    innerContainer: {
-      alignItems: "center",
-      flexDirection: "column",
-    },
-    itemHeading: {
-      fontWeight: "bold",
-    },
-    itemText: {
-      fontWeight: "300",
-    },
-  });
+  innerContainer: {
+    alignItems: "center",
+    flexDirection: "column",
+  },
+  itemHeading: {
+    fontWeight: "bold",
+  },
+  itemText: {
+    fontWeight: "300",
+  },
+});

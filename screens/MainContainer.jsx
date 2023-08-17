@@ -26,9 +26,18 @@ export default function MainContainer() {
         <Tab.Screen 
           name="Home" 
           component={Home} 
-          options={{ headerRight: () => <Text> Cart in BRL: {cartValue.toFixed(2)} </Text> }}/>
-        <Tab.Screen name="Cart" component={Cart}/>
-        <Tab.Screen name="Checkout" component={Checkout}/>
+          options={{ headerRight: () => <Text> Cart in BRL: {cartValue.toFixed(2)} </Text> }}
+          />
+        <Tab.Screen 
+          name="Cart" 
+          component={Cart}
+          options={{ headerRight: () => <Text> Cart in BRL: {cartValue.toFixed(2)} </Text> }}
+          />
+        <Tab.Screen 
+          name="Checkout" 
+          component={Checkout}
+          options={{ headerRight: () => <Text> Cart in BRL: {cartValue.toFixed(2)} </Text> }}
+          />
 
       </Tab.Navigator>
     </NavigationContainer>
