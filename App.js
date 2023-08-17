@@ -1,7 +1,11 @@
 import MainContainer from "./screens/MainContainer"
+import Provider from "./context/Provider"
+
 export default function App() {
   return (
-    <MainContainer />
+    <Provider>
+      <MainContainer />
+    </Provider>
   )
 
 }

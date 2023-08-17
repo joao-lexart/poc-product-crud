@@ -6,7 +6,6 @@ import { db } from "./config";
 import { doc, updateDoc } from "firebase/firestore";
 
 export function ActionModal({ handleClose, item }) {
-  console.log("chegou no modal");
   const [updatedName, setUpdatedName] = useState("");
   const [updatedPrice, setUpdatedPrice] = useState("");
   const [updatedCurrency, setUpdatedCurrency] = useState("");
@@ -18,7 +17,6 @@ export function ActionModal({ handleClose, item }) {
       return setError(true);
     }
     const ref = doc(db, `products/${item.id}`);
-    console.log("editou!");
     updateDoc(ref, {
       name: updatedName,
       category: updatedCategory,
