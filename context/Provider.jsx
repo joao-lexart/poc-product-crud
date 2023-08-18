@@ -24,6 +24,17 @@ function Provider({ children }) {
   const [visibleModal, setVisibleModal] = useState(false);
   const [cart, setCart] = useState([]);
   const [cartValue, setCartValue] = useState(0);
+  const [userName, setUserName] = useState('');
+  const [userCountry, setUserCountry] = useState('');
+  const [userStreet, setUserStreet] = useState('');
+  const [userCity, setUserCity] = useState('');
+  const [userState, setUserState] = useState('');
+  const [userZip, setUserZip] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+  const [userPhone, setUserPhone] = useState('');
+
+
+
 
   
 
@@ -138,7 +149,23 @@ function Provider({ children }) {
     cartValue,
     cart,
     setCart,
-    setCartValue
+    setCartValue,
+    userName, 
+    setUserName,
+    userCountry, 
+    setUserCountry,
+    userStreet, 
+    setUserStreet,
+    userCity, 
+    setUserCity,
+    userState, 
+    setUserState,
+    userZip, 
+    setUserZip,
+    userEmail, 
+    setUserEmail,
+    userPhone, 
+    setUserPhone
   };
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
