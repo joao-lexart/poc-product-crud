@@ -17,11 +17,8 @@ export default function Cart() {
       setCart(cart);
       if (item.currency !== "BRL") {
         const cotation = await fetchCurrency(item.currency);
-        console.log(cotation)
         const formattedCotation = cotation.slice(0, -2)
-        console.log(formattedCotation);
         const converted = Number(formattedCotation) * Number(item.price);
-        console.log(converted);
         setCartValue(() => cartValue - converted);
         return 
       }

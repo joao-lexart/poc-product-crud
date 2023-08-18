@@ -28,10 +28,7 @@ export default function Checkout() {
   } =  useContext(Context);
 
   const products = {
-    description: `UserName: ${userName}
-      Address: ${userStreet}, ${userCity}, ${userState}, ${userZip}, ${userCountry}
-      Phone: ${userPhone}
-    `,
+    description: 'Products',
     cartValue
   }
 

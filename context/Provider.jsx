@@ -71,7 +71,6 @@ function Provider({ children }) {
     }
 
     async function addToCart() {
-      console.log(productId);
       setProductId(productId + 1);
       const newItem = {
         name: item.name,

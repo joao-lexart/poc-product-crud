@@ -5,6 +5,7 @@ export default function PaypalCheckoutButton({ products }) {
     const [paidFor, setPaidFor] = useState(false);
     const [error, setError] = useState(null);
 
+
     const handleApprove = () => {
         setPaidFor(true)
     }
@@ -56,7 +57,7 @@ export default function PaypalCheckoutButton({ products }) {
             console.log(error)
         }}
         onCancel={() => {
-            console.log("Canceled!")
+            alert("Canceled!")
         }}
     />
   )
