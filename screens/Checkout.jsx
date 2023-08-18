@@ -47,7 +47,6 @@ export default function Checkout() {
   
   return (
     <View style={styles.container} >
-      <Text>Checkout</Text>
        <View style={styles.innerContainer} >
        <TextInput
         value={userName}
@@ -121,7 +120,7 @@ export default function Checkout() {
           numColumns={1}
           renderItem={(item) => renderCart(item)}
         />
-        <Text style= {styles.cartValue}> {`Total: R$${cartValue}`} </Text>
+        <Text style= {styles.cartValue}> {`Total: R$${cartValue.toFixed(2)}`} </Text>
         </View>
     </View>
   )

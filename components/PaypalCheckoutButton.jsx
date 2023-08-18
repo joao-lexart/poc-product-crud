@@ -5,9 +5,6 @@ export default function PaypalCheckoutButton({ products }) {
     const [paidFor, setPaidFor] = useState(false);
     const [error, setError] = useState(null);
 
-    console.log(products);
-
-
     const handleApprove = () => {
         setPaidFor(true)
     }
@@ -38,7 +35,6 @@ export default function PaypalCheckoutButton({ products }) {
             }
         }}
         createOrder={(data, actions) => {
-            console.log(data)
             return actions.order.create({
                 purchase_units: [
                     {

@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { StyleSheet, Text, View, Modal } from "react-native";
+import { StyleSheet, Text, View, Modal, Pressable } from "react-native";
 import {
   collection,
   addDoc,
@@ -10,6 +10,8 @@ import {
 import { db } from "../components/config";
 import { ActionModal } from "../components/ActionModal";
 import fetchCurrency from "../utils/fetchCurrency";
+
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
 
 export const Context = createContext();
 
@@ -24,25 +26,20 @@ function Provider({ children }) {
   const [visibleModal, setVisibleModal] = useState(false);
   const [cart, setCart] = useState([]);
   const [cartValue, setCartValue] = useState(0);
-  const [userName, setUserName] = useState('');
-  const [userCountry, setUserCountry] = useState('');
-  const [userStreet, setUserStreet] = useState('');
-  const [userCity, setUserCity] = useState('');
-  const [userState, setUserState] = useState('');
-  const [userZip, setUserZip] = useState('');
-  const [userEmail, setUserEmail] = useState('');
-  const [userPhone, setUserPhone] = useState('');
-
-
-
-
-  
+  const [userName, setUserName] = useState("");
+  const [userCountry, setUserCountry] = useState("");
+  const [userStreet, setUserStreet] = useState("");
+  const [userCity, setUserCity] = useState("");
+  const [userState, setUserState] = useState("");
+  const [userZip, setUserZip] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userPhone, setUserPhone] = useState("");
 
   function createItem() {
     if (name === "" || category === "" || price === "" || currency === "") {
       return setError(true);
     }
-    setProductId( productId + 1 )
+    setProductId(productId + 1);
     addDoc(collection(db, "products"), {
       name: name,
       category: category,
@@ -74,20 +71,20 @@ function Provider({ children }) {
     }
 
     async function addToCart() {
-      console.log(productId)
-      setProductId(productId + 1)
+      console.log(productId);
+      setProductId(productId + 1);
       const newItem = {
         name: item.name,
         category: item.category,
         currency: item.currency,
         price: item.price,
-        productId: productId
-      }
+        productId: productId,
+      };
       cart.push(newItem);
-      
+
       if (item.currency !== "BRL") {
         const cotation = await fetchCurrency(item.currency);
-        const formattedCotation = cotation.slice(0, -2)
+        const formattedCotation = cotation.slice(0, -2);
         const converted = Number(formattedCotation) * Number(item.price);
         setCart(cart);
         return setCartValue(() => cartValue + converted);
@@ -97,14 +94,23 @@ function Provider({ children }) {
     }
     return (
       <View style={styles.innerContainer}>
-        <Text style={styles.itemHeading}> Name: {item.name} </Text>
-        <Text style={styles.itemText}> Category: {item.category} </Text>
-        <Text style={styles.itemText}> Price: {item.price} </Text>
-        <Text style={styles.itemText}> Currency: {item.currency} </Text>
-        <button onClick={deleteItem}>Delete</button>
-        <button onClick={updateItem}>Update</button>
-        <button onClick={addToCart}>Add To Cart</button>
-
+        <View>
+          <Text style={styles.itemHeading}> {item.name} </Text>
+          <Text style={styles.itemText}> Category: {item.category} </Text>
+          <Text style={styles.itemText}> Price: {item.price} </Text>
+          <Text style={styles.itemText}> Currency: {item.currency} </Text>
+        </View>
+        <View style={styles.buttonsContainer}>
+          <Pressable onPress={deleteItem}>
+            <AntDesign name="delete" size={35} color="white" />
+          </Pressable>
+          <Pressable onPress={updateItem}>
+            <AntDesign name="edit" size={35} color="white" />
+          </Pressable>
+          <Pressable onPress={addToCart}>
+            <MaterialIcons name="add-shopping-cart" size={35} color="white" />
+          </Pressable>
+        </View>
         <Modal
           visible={visibleModal}
           transparent={true}
@@ -150,22 +156,22 @@ function Provider({ children }) {
     cart,
     setCart,
     setCartValue,
-    userName, 
+    userName,
     setUserName,
-    userCountry, 
+    userCountry,
     setUserCountry,
-    userStreet, 
+    userStreet,
     setUserStreet,
-    userCity, 
+    userCity,
     setUserCity,
-    userState, 
+    userState,
     setUserState,
-    userZip, 
+    userZip,
     setUserZip,
-    userEmail, 
+    userEmail,
     setUserEmail,
-    userPhone, 
-    setUserPhone
+    userPhone,
+    setUserPhone,
   };
   return <Context.Provider value={value}>{children}</Context.Provider>;
 }
@@ -176,11 +182,26 @@ const styles = StyleSheet.create({
   innerContainer: {
     alignItems: "center",
     flexDirection: "column",
+    justifyContent: "center",
+    backgroundColor: "#2196F3",
+    gap: "5px",
+    height: 200,
+    width: 200,
+    margin: 20,
   },
   itemHeading: {
     fontWeight: "bold",
+    color: "white",
+    fontSize: 24,
   },
   itemText: {
     fontWeight: "300",
+    fontSize: 18,
+    color: "#e5e5e5",
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    gap: "8px",
+    marginTop: '1rem'
   },
 });
