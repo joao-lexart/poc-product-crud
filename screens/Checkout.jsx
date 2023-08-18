@@ -1,9 +1,39 @@
 import React, { useContext } from 'react'
-import { Context } from "../context/Provider";
-
 import { View, Text, TextInput, StyleSheet, Button, FlatList } from 'react-native'
+import { Context } from "../context/Provider";
+import PaypalCheckoutButton from '../components/PaypalCheckoutButton';
+
+
 
 export default function Checkout() {
+  const {
+    userName, 
+    setUserName,
+    userCountry, 
+    setUserCountry,
+    userStreet, 
+    setUserStreet,
+    setUserCity,
+    userCity,
+    setUserState,
+    userState,
+    setUserZip,
+    userZip,
+    setUserPhone,
+    userPhone,
+    setUserEmail,
+    userEmail,
+    cart,
+    cartValue,
+  } =  useContext(Context);
+
+  const products = {
+    description: `UserName: ${userName}
+      Address: ${userStreet}, ${userCity}, ${userState}, ${userZip}, ${userCountry}
+      Phone: ${userPhone}
+    `,
+    cartValue
+  }
 
   const renderCart = ({item}) => {
     return (
@@ -14,25 +44,7 @@ export default function Checkout() {
       </View>
     )
   }
-  const {
-      userName, 
-      setUserName,
-      userCountry, 
-      setUserCountry,
-      userStreet, 
-      setUserStreet,
-      setUserCity,
-      userCity,
-      setUserState,
-      userState,
-      setUserZip,
-      userZip,
-      setUserPhone,
-      userPhone,
-      setUserEmail,
-      userEmail,
-      cart
-    } =  useContext(Context);
+  
   return (
     <View style={styles.container} >
       <Text>Checkout</Text>
@@ -101,15 +113,15 @@ export default function Checkout() {
         }}
         style={styles.textBox}
       />
-      <Button title="Buy" />
+      <PaypalCheckoutButton products={products} />
         </View> 
         <View style={styles.cart} >
-
         <FlatList  
           data={cart}
           numColumns={1}
           renderItem={(item) => renderCart(item)}
         />
+        <Text style= {styles.cartValue}> {`Total: R$${cartValue}`} </Text>
         </View>
     </View>
   )
@@ -153,6 +165,9 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: 5,
     marginHorizontal: 10,
-    
+  },
+  cartValue: {
+    fontSize: 22,
+    color: 'red'
   }
 });
